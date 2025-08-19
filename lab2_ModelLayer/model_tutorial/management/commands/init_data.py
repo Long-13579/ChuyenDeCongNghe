@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from datetime import date
-from models import Blog, Author, Entry
+from model_tutorial.models import Blog, Author, Entry
 
 
 class Command(BaseCommand):
