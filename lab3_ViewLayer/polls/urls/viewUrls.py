@@ -1,5 +1,5 @@
 from django.urls import path
-from polls import viewFunction
+from polls.views import viewFunction
 
 urlpatterns = [
     path("time/", viewFunction.current_datetime, name="current-datetime"),
