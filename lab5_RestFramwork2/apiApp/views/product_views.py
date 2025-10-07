@@ -31,6 +31,7 @@ def product_list_by_category(request):
 
 
 
+@cache_page(60 * 5)  # Cache for 5 minutes
 @api_view(["GET"])
 def product_detail(request, slug):
     product = Product.objects.get(slug=slug)
