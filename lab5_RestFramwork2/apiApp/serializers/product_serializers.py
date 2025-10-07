@@ -6,13 +6,6 @@ from .user_serializers import UserSerializer
 
 class ProductListSerializer(serializers.ModelSerializer):
     photo = serializers.SerializerMethodField()
-    shortDescription = serializers.SerializerMethodField()
-    featureDescription = serializers.SerializerMethodField()
-    longDescription = serializers.SerializerMethodField()
-    qty = serializers.SerializerMethodField()
-    rating = serializers.SerializerMethodField()
-    reviews = serializers.SerializerMethodField()
-    category_id = serializers.IntegerField(source="category.id", read_only=True)
     category_name = serializers.CharField(source="category.name", read_only=True)
     discount_percent = serializers.SerializerMethodField()
 
@@ -24,14 +17,7 @@ class ProductListSerializer(serializers.ModelSerializer):
             "name", 
             "slug",
             "description",
-            "shortDescription", 
-            "featureDescription", 
-            "longDescription", 
             "price", 
-            "qty", 
-            "rating", 
-            "reviews",
-            "category_id",
             "category_name",
             "discount_percent",
             "featured"

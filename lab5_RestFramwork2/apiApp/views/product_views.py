@@ -7,13 +7,45 @@ from ..models import Product
 from ..serializers import ProductListSerializer, ProductDetailSerializer, ProductCreateSerializer
 # ...existing code...
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
+
 
 
 @api_view(['GET'])
 def product_list(request):
     products = Product.objects.all()
-    serializer = ProductListSerializer(products, many=True)
-    return Response(serializer.data)
+
+    # Filtering
+    category = request.query_params.get('category')
+    price_min = request.query_params.get('price_min')
+    price_max = request.query_params.get('price_max')
+    featured = request.query_params.get('featured')
+    search = request.query_params.get('search')
+
+    if category:
+        products = products.filter(category__name__icontains=category)
+    if price_min:
+        products = products.filter(price__gte=price_min)
+    if price_max:
+        products = products.filter(price__lte=price_max)
+    if featured is not None:
+        if featured.lower() in ['true', '1', 'yes']:
+            products = products.filter(featured=True)
+        elif featured.lower() in ['false', '0', 'no']:
+            products = products.filter(featured=False)
+    if search:
+        products = products.filter(
+            Q(name__icontains=search) |
+            Q(description__icontains=search) |
+            Q(category__name__icontains=search)
+        )
+
+    # Pagination
+    paginator = PageNumberPagination()
+    paginator.page_size = int(request.query_params.get('page_size', 10))
+    result_page = paginator.paginate_queryset(products, request)
+    serializer = ProductListSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 @api_view(['GET'])
 def product_list_admin(request):
